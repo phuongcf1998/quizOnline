@@ -36,6 +36,7 @@ public class DeleteServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         String questionID = request.getParameter("pk");
         String lastSearchValue = request.getParameter("lastSearchValue");
+        String page = request.getParameter("page");
         String status = request.getParameter("status");
         String url = "";
         try {
@@ -44,7 +45,7 @@ public class DeleteServlet extends HttpServlet {
             if (result) {
                 url = "ProcessServlet?btAction=Search_Question"
                         + "&txtSearchValue="
-                        + lastSearchValue + "&slStatus=" + status;
+                        + lastSearchValue + "&slStatus=" + status + "&page=" + page;
 
             }
 

@@ -74,21 +74,24 @@ public class QuestionDAO implements Serializable {
 
     }
 
-    public void searchQuestionBySubject(String subjectID, int status) throws SQLException, NamingException {
+    public void searchQuestionBySubject(String subjectID, int status, int pageIndex, int pageSize) throws SQLException, NamingException {
         Connection conn = null;
         PreparedStatement stm = null;
         ResultSet rs = null;
         try {
             conn = DBUtils.makeConnection();
             if (conn != null) {
-                String sql = "Select id ,question_content,answer_1,"
-                        + "answer_2,answer_3,answer_4,"
-                        + "answer_correct,createDate "
-                        + "from tbl_Question where subjectID = ? and status = ?";
+                String sql = "WITH pagingTable as(SELECT ROW_NUMBER() OVER (ORDER BY tbl_Question.question_content) AS records , "
+                        + "* FROM tbl_Question WHERE subjectID =? and status=?)\n"
+                        + "SELECT * FROM pagingTable WHERE pagingTable.records BETWEEN ?*?-? AND ?*?";
                 stm = conn.prepareStatement(sql);
                 stm.setString(1, subjectID);
                 stm.setInt(2, status);
-
+                stm.setInt(3, pageIndex);
+                stm.setInt(4, pageSize);
+                stm.setInt(5, pageSize - 1);
+                stm.setInt(6, pageIndex);
+                stm.setInt(7, pageSize);
                 rs = stm.executeQuery();
                 while (rs.next()) {
                     if (listQuestion == null) {
@@ -120,21 +123,24 @@ public class QuestionDAO implements Serializable {
         }
     }
 
-    public void searchQuestionByName(String searchValue, int status) throws SQLException, NamingException {
+    public void searchQuestionByName(String searchValue, int status, int pageIndex, int pageSize) throws SQLException, NamingException {
         Connection conn = null;
         PreparedStatement stm = null;
         ResultSet rs = null;
         try {
             conn = DBUtils.makeConnection();
             if (conn != null) {
-                String sql = "Select id ,question_content,answer_1,"
-                        + "answer_2,answer_3,answer_4,"
-                        + "answer_correct,createDate,"
-                        + "subjectID,status from tbl_Question where question_content like ? and status = ? ";
+                String sql = "WITH pagingTable as(SELECT ROW_NUMBER() OVER (ORDER BY tbl_Question.question_content) AS records , "
+                        + "* FROM tbl_Question WHERE question_content like ? and status = ?)\n"
+                        + "SELECT * FROM pagingTable WHERE pagingTable.records BETWEEN ?*?-? AND ?*?";
                 stm = conn.prepareStatement(sql);
                 stm.setString(1, "%" + searchValue + "%");
                 stm.setInt(2, status);
-
+                stm.setInt(3, pageIndex);
+                stm.setInt(4, pageSize);
+                stm.setInt(5, pageSize - 1);
+                stm.setInt(6, pageIndex);
+                stm.setInt(7, pageSize);
                 rs = stm.executeQuery();
                 while (rs.next()) {
                     if (listQuestion == null) {
@@ -313,5 +319,73 @@ public class QuestionDAO implements Serializable {
             }
         }
         return result;
+    }
+
+    public int getTotalPageByQuestionName(String questionName, int status) throws NamingException, SQLException {
+        Connection conn = null;
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBUtils.makeConnection();
+            if (conn != null) {
+                String sql = "SELECT COUNT(id) FROM tbl_Question WHERE "
+                        + "question_content like ? and status = ?";
+
+                stm = conn.prepareStatement(sql);
+                stm.setString(1, "%" + questionName + "%");
+                stm.setInt(2, status);
+                rs = stm.executeQuery();
+                while (rs.next()) {
+                    return rs.getInt(1);
+
+                }
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stm != null) {
+                stm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+        return 0;
+    }
+
+    public int getTotalPageBySubjectID(String subjectID, int status) throws NamingException, SQLException {
+        Connection conn = null;
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBUtils.makeConnection();
+            if (conn != null) {
+                String sql = "SELECT COUNT(id) FROM tbl_Question WHERE "
+                        + "subjectID = ? and status = ?";
+
+                stm = conn.prepareStatement(sql);
+                stm.setString(1, subjectID);
+                stm.setInt(2, status);
+                rs = stm.executeQuery();
+                while (rs.next()) {
+                    return rs.getInt(1);
+
+                }
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stm != null) {
+                stm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+        return 0;
     }
 }

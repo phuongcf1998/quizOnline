@@ -44,6 +44,7 @@ public class UpdateServlet extends HttpServlet {
         String ans3 = request.getParameter("txtAns3");
         String ans4 = request.getParameter("txtAns4");
         String ansCorrect = request.getParameter("txtAnsCorrect");
+        String page = request.getParameter("page");
         String lastSearchValue = request.getParameter("txtLastSearchValue");
         String url = "";
 
@@ -68,7 +69,7 @@ public class UpdateServlet extends HttpServlet {
             if (result) {
                 url = "ProcessServlet?btAction=Search_Question"
                         + "&txtSearchValue="
-                        + lastSearchValue + "&slStatus=" + status;
+                        + lastSearchValue + "&slStatus=" + status + "&page=" + page;
             }
 
         } catch (SQLException ex) {

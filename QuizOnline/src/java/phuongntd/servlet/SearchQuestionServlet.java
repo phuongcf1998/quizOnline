@@ -8,7 +8,6 @@ package phuongntd.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
@@ -26,8 +25,6 @@ import phuongntd.subject.SubjectDAO;
  */
 public class SearchQuestionServlet extends HttpServlet {
 
-    private final String SEARCH_PAGE = "home_admin.jsp";
-
     private final String SHOW_SEARCH_PAGE = "home_admin.jsp";
 
     /**
@@ -44,15 +41,20 @@ public class SearchQuestionServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String searchValue = request.getParameter("txtSearchValue");
+        int pageIndex = 1;
+        if (request.getParameter("page") != null) {
+            pageIndex = Integer.parseInt(request.getParameter("page"));
+        }
         int status = Integer.parseInt(request.getParameter("slStatus"));
-
-        System.out.println(status);
+        int pageSize = 20;
+        int endPage = 0;
         boolean isContainSubject = false;
-        String url = SEARCH_PAGE;
+        String url = SHOW_SEARCH_PAGE;
 
         try {
             QuestionDAO questionDAO = new QuestionDAO();
             SubjectDAO subjectDAO = new SubjectDAO();
+
             List<String> listAllSubject = subjectDAO.getAllSubject();
             for (String subject : listAllSubject) {
                 if (searchValue.equals(subject)) {
@@ -61,15 +63,34 @@ public class SearchQuestionServlet extends HttpServlet {
                 }
             }
             if (isContainSubject) {
-                questionDAO.searchQuestionBySubject(searchValue, status);
+                questionDAO.searchQuestionBySubject(searchValue, status, pageIndex, pageSize);
+
                 List<QuestionDTO> listQuestion = questionDAO.getListQuestion();
+                int countListQuestion = questionDAO.getTotalPageBySubjectID(searchValue, status);
+                
+                endPage = countListQuestion / pageSize;
+                System.out.println(countListQuestion+"sub");
+                if (countListQuestion % pageSize != 0) {
+                    endPage++;
+                }
                 request.setAttribute("SEARCH_RESULT", listQuestion);
                 request.setAttribute("LIST_SUBJECT", listAllSubject);
+                request.setAttribute("END_PAGE", endPage);
+                request.setAttribute("CURRENT_PAGE", pageIndex);
             } else {
-                questionDAO.searchQuestionByName(searchValue, status);
+                questionDAO.searchQuestionByName(searchValue, status, pageIndex, pageSize);
                 List<QuestionDTO> listQuestion = questionDAO.getListQuestion();
+                int countListQuestion = questionDAO.getTotalPageByQuestionName(searchValue, status);
+
+                endPage = countListQuestion / pageSize;
+                System.out.println(countListQuestion+"name");
+                if (countListQuestion % pageSize != 0) {
+                    endPage++;
+                }
                 request.setAttribute("SEARCH_RESULT", listQuestion);
                 request.setAttribute("LIST_SUBJECT", listAllSubject);
+                request.setAttribute("END_PAGE", endPage);
+                request.setAttribute("CURRENT_PAGE", pageIndex);
             }
 
         } catch (SQLException ex) {
@@ -77,9 +98,8 @@ public class SearchQuestionServlet extends HttpServlet {
         } catch (NamingException ex) {
             log("SearchServlet_NamingException " + ex.getMessage());
         } finally {
-//            System.out.println(listQuestionPRJ321);
-//            System.out.println(listQuestionPRJ311);
 
+//            System.out.println(listQuestionPRJ311);
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);
             out.close();

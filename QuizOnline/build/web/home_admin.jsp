@@ -28,6 +28,10 @@
 
 
             }
+            .paging {
+                display: flex;
+                justify-content: center;
+            }
             a:active, a:visited {
                 color: blue;
             }
@@ -35,9 +39,10 @@
     </head>
     <body>
         <c:set var="admin" value="${sessionScope.ADMIN.name}"/>
-        <c:set var="selectStatus" value=""/>
+        <c:set var="endPage" value="${requestScope.END_PAGE}"/>
         <c:set var="searchResult" value="${requestScope.SEARCH_RESULT}"/>
-        
+        <c:set var="currentPage" value="${requestScope.CURRENT_PAGE}" />
+
 
         <c:set var="listSubject" value="${requestScope.LIST_SUBJECT}"/>
         <c:set var="searchValue" value="${param.txtSearchValue}"/>
@@ -114,6 +119,19 @@
 
         </div> </br></br>
 
+        <div class="paging">
+            <c:forEach begin="1" end="${endPage}" var="i">
+                <c:url var="currentPageLink" value="SearchQuestionServlet">
+                    <c:param name="slStatus" value="${param.slStatus}"/>
+                    <c:param name="page" value="${i}" />
+                    <c:param name="txtSearchValue" value="${searchValue}" />
+                   
+                </c:url>
+                <a  style="margin: 5px" href="${currentPageLink}">${i}</a>
+            </c:forEach>
+
+        </div>
+
         <c:if test="${not empty searchValue}">
             <c:if test="${not empty searchResult}">
                 <c:forEach var="subject" items="${listSubject}" >
@@ -121,7 +139,7 @@
                     <table style="width: 100%" border="1">
                         <thead>
                             <tr>
-                                
+
                                 <th>Subject ID</th>
                                 <th>Question ID</th>
                                 <th>Question Content</th>
@@ -141,7 +159,7 @@
                                 <c:if test="${subject == dto.subjectID}">
                                 <form action="ProcessServlet">
                                     <tr>
-                                       
+
                                         <td>
                                             <select name="slSubjectID">
                                                 <c:forEach var="row" items="${rsSubjectID.rows}">
@@ -202,7 +220,8 @@
                                                     <c:param name="btAction" value="Delete" />
                                                     <c:param name="pk" value="${dto.id}" />
                                                     <c:param name="lastSearchValue" value="${searchValue}" />
-                                                    <c:param name="status" value="${param.slStatus}" />
+                                                    <c:param name="status" value="${param.slStatus}"/>
+                                                    <c:param name="page" value="${currentPage}" />
                                                 </c:url>
                                                 <a href="${delLink}">Delete</a>
 
@@ -212,6 +231,7 @@
                                             <input type="submit" value="Update" name="btAction" />
                                             <input type="hidden" name="txtLastSearchValue" value="${searchValue}" />
                                             <input type="hidden" name="status" value="${param.slStatus}"/>
+                                            <input type="hidden" name="page" value="${currentPage}"/>
 
                                         </td>
                                     </tr>
