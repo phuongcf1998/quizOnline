@@ -41,7 +41,7 @@ public class ViewQuizHistoryServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String url = "";
+        String url = QUIZ_HISTORY;
         try {
             HttpSession session = request.getSession(false);
             if (session != null) {
@@ -49,7 +49,7 @@ public class ViewQuizHistoryServlet extends HttpServlet {
                 HistoryDAO dao = new HistoryDAO();
                 dao.getQuizHistoryByEmail(userInfo.getEmail());
                 List<HistoryDTO> listQuizHistory = dao.getListQuizHistory();
-                url = QUIZ_HISTORY;
+                
                 request.setAttribute("HISTORY_LIST", listQuizHistory);
             }
         } catch (SQLException ex) {

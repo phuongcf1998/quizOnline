@@ -7,6 +7,7 @@ package phuongntd.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.text.ParseException;
@@ -54,7 +55,7 @@ public class CheckQuizServlet extends HttpServlet {
         String timeRemaining = request.getParameter("txtTimeRemaining");
         String timeQuiz = request.getParameter("txtQuizTime");
         Time timeTakeQuiz = TimeCaculator.convertTotalSecondToTime(timeRemaining, timeQuiz + ":" + "00");
-//        Time quizTime = Time.valueOf("request.getParameter(\"txtQuizTime\")");
+        Date currentDate = (Date) TimeCaculator.getCurrentDate();
         String subjectID = request.getParameter("subjectID");
         String url = QUIZ_RESULT;
         try {
@@ -79,13 +80,15 @@ public class CheckQuizServlet extends HttpServlet {
             HttpSession session = request.getSession(false);
             if (session != null) {
                 UserDTO userInfo = (UserDTO) session.getAttribute("STUDENT");
-                boolean result = historyDAO.saveQuizStudentTake(userInfo.getEmail(), subjectID, finalPoint, numberQuestionCorrect, timeTakeQuiz);
+
+                boolean result = historyDAO.saveQuizStudentTake(userInfo.getEmail(), subjectID, finalPoint, numberQuestionCorrect, timeTakeQuiz, currentDate);
             }
             request.setAttribute("NUMBER_QUESTION", numberQuestion);
             request.setAttribute("FINAL_POINT", finalPoint);
             request.setAttribute("QUESTIONS_CORRECT", numberQuestionCorrect);
             request.setAttribute("TIME_TAKE_QUIZ", timeTakeQuiz);
             request.setAttribute("SUBJECT_ID", subjectID);
+            request.setAttribute("DATE", currentDate);
 
         } catch (NamingException ex) {
             log("CheckQuizServlet_NamingException " + ex.getMessage());

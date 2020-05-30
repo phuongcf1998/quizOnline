@@ -41,24 +41,36 @@ public class SearchHistoryServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         String searchValue = request.getParameter("txtSearchValue").trim();
         String emailUser = request.getParameter("txtEmailUser");
-        List<HistoryDTO> listHistory2=null;
-        String url = "";
-        try {
-           
-                HistoryDAO dao = new HistoryDAO();
-                dao.searchHistoryBySubject(searchValue, emailUser);
-                List<HistoryDTO> listHistory = dao.getListQuizHistory();
-                listHistory2=listHistory;
-                url = SHOW_SEARCH_PAGE;
-                request.setAttribute("SEARCH_RESULT", listHistory);
 
-            
+        int pageIndex = 1;
+        if (request.getParameter("page") != null) {
+            pageIndex = Integer.parseInt(request.getParameter("page"));
+        }
+        int pageSize = 5;
+        int endPage = 0;
+        String url = SHOW_SEARCH_PAGE;
+        try {
+
+            HistoryDAO dao = new HistoryDAO();
+
+            dao.searchHistoryBySubject(searchValue, emailUser,pageIndex,pageSize);
+            List<HistoryDTO> listHistory = dao.getListQuizHistory();
+            int countListHistory = dao.getTotalPage(searchValue, emailUser);
+            endPage = countListHistory / pageSize;
+
+            if (countListHistory % pageSize != 0) {
+                endPage++;
+            }
+
+            request.setAttribute("SEARCH_RESULT", listHistory);
+            request.setAttribute("END_PAGE", endPage);
+
         } catch (SQLException ex) {
             log("SearchHistoryServlet_SQLException " + ex.getMessage());
         } catch (NamingException ex) {
             log("SearchHistoryServlet_NamingException " + ex.getMessage());
         } finally {
-            System.out.println(listHistory2);
+
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);
             out.close();

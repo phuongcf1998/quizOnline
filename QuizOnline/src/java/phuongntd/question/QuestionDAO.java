@@ -81,17 +81,19 @@ public class QuestionDAO implements Serializable {
         try {
             conn = DBUtils.makeConnection();
             if (conn != null) {
-                String sql = "WITH pagingTable as(SELECT ROW_NUMBER() OVER (ORDER BY tbl_Question.question_content) AS records , "
-                        + "* FROM tbl_Question WHERE subjectID =? and status=?)\n"
-                        + "SELECT * FROM pagingTable WHERE pagingTable.records BETWEEN ?*?-? AND ?*?";
+                String sql = "SELECT id,question_content,answer_1,answer_2,"
+                        + "answer_3,answer_4,answer_correct,createDate "
+                        + "FROM tbl_Question WHERE "
+                        + "subjectID = ? AND status = ? "
+                        + "ORDER BY question_content "
+                        + "OFFSET ? ROWS "
+                        + "FETCH NEXT ? "
+                        + "ROW ONLY";
                 stm = conn.prepareStatement(sql);
                 stm.setString(1, subjectID);
                 stm.setInt(2, status);
-                stm.setInt(3, pageIndex);
+                stm.setInt(3, (pageIndex - 1) * pageSize);
                 stm.setInt(4, pageSize);
-                stm.setInt(5, pageSize - 1);
-                stm.setInt(6, pageIndex);
-                stm.setInt(7, pageSize);
                 rs = stm.executeQuery();
                 while (rs.next()) {
                     if (listQuestion == null) {
@@ -130,17 +132,20 @@ public class QuestionDAO implements Serializable {
         try {
             conn = DBUtils.makeConnection();
             if (conn != null) {
-                String sql = "WITH pagingTable as(SELECT ROW_NUMBER() OVER (ORDER BY tbl_Question.question_content) AS records , "
-                        + "* FROM tbl_Question WHERE question_content like ? and status = ?)\n"
-                        + "SELECT * FROM pagingTable WHERE pagingTable.records BETWEEN ?*?-? AND ?*?";
+                String sql = "SELECT id,question_content,answer_1,answer_2,"
+                        + "answer_3,answer_4,answer_correct,"
+                        + "createDate,subjectID "
+                        + "FROM tbl_Question WHERE "
+                        + "question_content like ? AND status = ? "
+                        + "ORDER BY question_content "
+                        + "OFFSET ? ROWS "
+                        + "FETCH NEXT ? "
+                        + "ROW ONLY";
                 stm = conn.prepareStatement(sql);
                 stm.setString(1, "%" + searchValue + "%");
                 stm.setInt(2, status);
-                stm.setInt(3, pageIndex);
+                stm.setInt(3, (pageIndex - 1) * pageSize);
                 stm.setInt(4, pageSize);
-                stm.setInt(5, pageSize - 1);
-                stm.setInt(6, pageIndex);
-                stm.setInt(7, pageSize);
                 rs = stm.executeQuery();
                 while (rs.next()) {
                     if (listQuestion == null) {
@@ -149,7 +154,6 @@ public class QuestionDAO implements Serializable {
                     String id = rs.getString("id");
                     String questionContent = rs.getString("question_content");
                     String a1 = rs.getString("answer_1");
-
                     String a2 = rs.getString("answer_2");
                     String a3 = rs.getString("answer_3");
                     String a4 = rs.getString("answer_4");

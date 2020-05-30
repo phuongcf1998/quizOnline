@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import phuongntd.question.QuestionDAO;
 import phuongntd.question.QuestionDTO;
 import phuongntd.subject.SubjectDAO;
+import phuongntd.subject.SubjectDTO;
 
 /**
  *
@@ -40,7 +41,7 @@ public class SearchQuestionServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String searchValue = request.getParameter("txtSearchValue");
+        String searchValue = request.getParameter("txtSearchValue").trim();
         int pageIndex = 1;
         if (request.getParameter("page") != null) {
             pageIndex = Integer.parseInt(request.getParameter("page"));
@@ -54,10 +55,10 @@ public class SearchQuestionServlet extends HttpServlet {
         try {
             QuestionDAO questionDAO = new QuestionDAO();
             SubjectDAO subjectDAO = new SubjectDAO();
-
-            List<String> listAllSubject = subjectDAO.getAllSubject();
-            for (String subject : listAllSubject) {
-                if (searchValue.equals(subject)) {
+            subjectDAO.getAllSubject();
+            List<SubjectDTO> listAllSubject = subjectDAO.getListSubject();
+            for (SubjectDTO subject : listAllSubject) {
+                if (searchValue.equals(subject.getSubjectID())) {
                     isContainSubject = true;
                     break;
                 }
@@ -67,9 +68,9 @@ public class SearchQuestionServlet extends HttpServlet {
 
                 List<QuestionDTO> listQuestion = questionDAO.getListQuestion();
                 int countListQuestion = questionDAO.getTotalPageBySubjectID(searchValue, status);
-                
+
                 endPage = countListQuestion / pageSize;
-                System.out.println(countListQuestion+"sub");
+
                 if (countListQuestion % pageSize != 0) {
                     endPage++;
                 }
@@ -83,10 +84,11 @@ public class SearchQuestionServlet extends HttpServlet {
                 int countListQuestion = questionDAO.getTotalPageByQuestionName(searchValue, status);
 
                 endPage = countListQuestion / pageSize;
-                System.out.println(countListQuestion+"name");
+
                 if (countListQuestion % pageSize != 0) {
                     endPage++;
                 }
+                
                 request.setAttribute("SEARCH_RESULT", listQuestion);
                 request.setAttribute("LIST_SUBJECT", listAllSubject);
                 request.setAttribute("END_PAGE", endPage);

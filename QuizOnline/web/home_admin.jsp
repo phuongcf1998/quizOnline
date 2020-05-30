@@ -44,6 +44,7 @@
         <c:set var="currentPage" value="${requestScope.CURRENT_PAGE}" />
 
 
+
         <c:set var="listSubject" value="${requestScope.LIST_SUBJECT}"/>
         <c:set var="searchValue" value="${param.txtSearchValue}"/>
 
@@ -51,28 +52,16 @@
             <c:param name="btAction" value="LogOut" />
         </c:url>
 
+        
         <c:catch var="ex">
             <sql:setDataSource var="con" dataSource="QuizOnline" />
             <c:if test="${not empty con}">
-                <sql:query var="rsSubjectID" dataSource="${con}">
-                    Select subjectID from tbl_Subject
-                </sql:query>
-            </c:if>
-        </c:catch>
-        <c:if test="${not empty ex}">
-            <font color="red"> Subject ID Occurs errors</font>
-
-        </c:if>
-
-        <c:catch var="exx">
-            <sql:setDataSource var="cons" dataSource="QuizOnline" />
-            <c:if test="${not empty cons}">
-                <sql:query var="rsStatus" dataSource="${cons}">
+                <sql:query var="rsStatus" dataSource="${con}">
                     Select status,description from tbl_Status order by status offset 1 rows
                 </sql:query>
             </c:if>
         </c:catch>
-        <c:if test="${not empty exx}">
+        <c:if test="${not empty ex}">
             <font color="red"> Status Occurs errors</font>
 
         </c:if>
@@ -125,9 +114,9 @@
                     <c:param name="slStatus" value="${param.slStatus}"/>
                     <c:param name="page" value="${i}" />
                     <c:param name="txtSearchValue" value="${searchValue}" />
-                   
+
                 </c:url>
-                <a  style="margin: 5px" href="${currentPageLink}">${i}</a>
+                <a id="${i}"  style="margin: 5px" href="${currentPageLink}">${i}</a>
             </c:forEach>
 
         </div>
@@ -135,8 +124,11 @@
         <c:if test="${not empty searchValue}">
             <c:if test="${not empty searchResult}">
                 <c:forEach var="subject" items="${listSubject}" >
-                    <h3 style="color:red">${subject}</h3> <br/>
-                    <table style="width: 100%" border="1">
+
+                    <table style="width: 100%;margin-top: 30px;" border="1">
+                        <thead>
+                            <tr><th colspan="10"><p style="color:red">${subject.subjectID} - ${subject.subjectName}</p></th></tr>
+                        </thead>
                         <thead>
                             <tr>
 
@@ -156,13 +148,13 @@
                         </thead>
                         <tbody>
                             <c:forEach var="dto" items="${searchResult}" varStatus="counter">
-                                <c:if test="${subject == dto.subjectID}">
+                                <c:if test="${subject.subjectID == dto.subjectID}">
                                 <form action="ProcessServlet">
                                     <tr>
 
                                         <td>
                                             <select name="slSubjectID">
-                                                <c:forEach var="row" items="${rsSubjectID.rows}">
+                                                <c:forEach var="row" items="${listSubject}">
                                                     <option  value="${row.subjectID}" 
                                                              <c:if test="${row.subjectID == dto.subjectID}"> 
                                                                  selected="selected"
@@ -254,18 +246,27 @@
 
             <h1>No record is matched !!!</h1>
         </c:if>
+
+        <script
+            src="https://code.jquery.com/jquery-3.5.1.js"
+            integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+        crossorigin="anonymous"></script>
+
+        <script>
+            
+            
+            document.getElementById("${currentPage}").style.color='red';
+            
+            
+
+            $("table").each(function () {
+                if ($(this).find("tbody").html().trim().length === 0) {
+                    $(this).hide()
+                }
+            })
+        </script>
     </c:if>
 
-    <script>
 
-        document.getElementById('slStatus').onchange = function () {
-            localStorage.setItem('selectedStatus', document.getElementById('slStatus').value);
-        };
-
-        if (localStorage.getItem('selectedStatus')) {
-            document.getElementById('slStatus').options[localStorage.getItem('selectedtem')].selected = true;
-        }
-
-    </script>
 </body>
 </html>

@@ -6,6 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>  
 <!DOCTYPE html>
 <html>
     <head>
@@ -29,7 +30,7 @@
         <c:set var="time" value="${requestScope.TIME_TAKE_QUIZ}" />
         <c:set var="correctsAnswer" value="${requestScope.QUESTIONS_CORRECT}"/>
         <c:set var="subjectID" value="${requestScope.SUBJECT_ID}"/>
-
+        <c:set var="currentDate" value="${requestScope.DATE}"/>
       
 
         <table class="flex-container">
@@ -68,9 +69,8 @@
                     <td><font color="red">${time}</font></td>
                 </tr>
                  <tr>
-                    <td>
-                        
-                    </td>
+                    <td>Date</td>
+                    <td><font color="red"><fmt:formatDate value="${currentDate}" pattern="dd-MMM-yyyy"/></font></td>
                 </tr>
                  <tr>
                     <td>

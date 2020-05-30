@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.naming.NamingException;
+import phuongntd.question.QuestionDTO;
 import phuongntd.utils.DBUtils;
 
 /**
@@ -20,6 +21,12 @@ import phuongntd.utils.DBUtils;
  * @author Yun
  */
 public class SubjectDAO implements Serializable {
+
+    List<SubjectDTO> listSubject;
+
+    public List<SubjectDTO> getListSubject() {
+        return listSubject;
+    }
 
     public int getQuizTimeOfSubject(String subjectID) throws SQLException, NamingException {
         Connection conn = null;
@@ -53,7 +60,7 @@ public class SubjectDAO implements Serializable {
         return result;
     }
 
-     public int getNumberQuestionOfSubject(String subjectID) throws SQLException, NamingException {
+    public int getNumberQuestionOfSubject(String subjectID) throws SQLException, NamingException {
         Connection conn = null;
         PreparedStatement stm = null;
         ResultSet rs = null;
@@ -84,7 +91,8 @@ public class SubjectDAO implements Serializable {
         }
         return result;
     }
-     public List getAllSubject() throws SQLException, NamingException {
+
+    public void getAllSubject() throws SQLException, NamingException {
         Connection conn = null;
         PreparedStatement stm = null;
         ResultSet rs = null;
@@ -92,12 +100,21 @@ public class SubjectDAO implements Serializable {
         try {
             conn = DBUtils.makeConnection();
             if (conn != null) {
-                String sql = "Select subjectID from tbl_Subject";
+                String sql = "Select subjectID,subjectName,quizTime,numberQuestion,status from tbl_Subject";
 
                 stm = conn.prepareStatement(sql);
                 rs = stm.executeQuery();
                 while (rs.next()) {
-                    result.add(rs.getString("subjectID"));
+                    if (listSubject == null) {
+                        listSubject = new ArrayList<>();
+                    }
+                    String id = rs.getString("subjectID");
+                    String name = rs.getString("subjectName");
+                    int quizTime = rs.getInt("quizTime");
+                    int numQuestion = rs.getInt("numberQuestion");
+                    int status = rs.getInt("status");
+                    SubjectDTO dto = new SubjectDTO(id, name, quizTime, numQuestion, status);
+                    listSubject.add(dto);
 
                 }
             }
@@ -112,6 +129,6 @@ public class SubjectDAO implements Serializable {
                 conn.close();
             }
         }
-        return result;
+
     }
 }

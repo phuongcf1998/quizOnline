@@ -52,7 +52,7 @@
                 <button id="btnPrevious">Previous</button>
                 <button id="btnNext">Next</button>
             </div>
-            <form action="ProcessServlet" class="container-question" method="POST" >
+            <form id="formQuiz" action="ProcessServlet" class="container-question" method="POST" >
 
                 <c:forEach var="row" items="${listQuestion}" varStatus="i">
                     <table class="question hiddenQuestion" id="q+${i.count}">
@@ -95,7 +95,7 @@
                 <input type="hidden" name="subjectID" value="${subjectID}"/>
                 <input type="hidden" id="txtTimeRemaining" name="txtTimeRemaining" value=""/>
                 <input type="hidden" name="txtQuizTime" value="${quizTime}"/>
-                <input type="submit" value="Finish Quiz" name="btAction">
+                <input type="submit" id="btnSubmit" value="Finish Quiz" name="btAction">
 
                 <div>
                     <p class="container-question" style="color: red" id="timeCountDown"></p>
@@ -165,7 +165,14 @@
                     display.textContent = minutes + ":" + seconds;
 
                     if (diff <= 0) {
-                        start = Date.now() + 1000;
+                        
+                        var form = document.getElementById("formQuiz");
+                        var hiddenField = document.createElement("input");
+                        hiddenField.setAttribute("type", "hidden");
+                        hiddenField.setAttribute("name", "btAction");
+                        hiddenField.setAttribute("value", "Finish Quiz");
+                        form.appendChild(hiddenField);
+                        form.submit();
                     }
                 }
                 ;
@@ -187,6 +194,21 @@
 
 
             }
+
+            document.getElementById("btnSubmit").addEventListener('click', function () {
+
+                if (confirm("Are you sure to submit quiz ?")) {
+                    var form = document.getElementById("formQuiz");
+                    var hiddenField = document.createElement("input");
+                    hiddenField.setAttribute("type", "hidden");
+                    hiddenField.setAttribute("name", "btAction");
+                    hiddenField.setAttribute("value", "Finish Quiz");
+                    form.appendChild(hiddenField);
+                    form.submit();
+                } else {
+
+                }
+            });
 
 
 
