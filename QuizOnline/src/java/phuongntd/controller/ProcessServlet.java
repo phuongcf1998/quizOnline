@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ProcessServlet extends HttpServlet {
 
-    private final String loginPage = "login.html";
+    private final String LOGIN_PAGE = "login.html";
     private final String LOGOUT_SERVLET = "LogOutServlet";
     private final String LOGIN_SERVLET = "LoginServlet";
     private final String CREATE_NEW_ACCOUNT_SERVLET = "CreateNewAccountServlet";
@@ -45,7 +45,7 @@ public class ProcessServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String url = loginPage;
+        String url = LOGIN_PAGE;
         try {
             String button = request.getParameter("btAction");
 
@@ -73,7 +73,7 @@ public class ProcessServlet extends HttpServlet {
                 url = VIEW_QUIZ_HISTORY;
             } else if (button.equals("Search History")) {
                 url = SEARCH_HISTORY_SERVLET;
-            } 
+            }
 
         } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);

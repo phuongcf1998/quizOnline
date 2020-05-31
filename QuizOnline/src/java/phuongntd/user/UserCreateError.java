@@ -11,7 +11,7 @@ import java.io.Serializable;
  *
  * @author Yun
  */
-public class UserCreateErr  implements Serializable{
+public class UserCreateError  implements Serializable{
     private String emailEmpty;
     private String emailNotValid;
     private String emailIsExits;
@@ -21,10 +21,10 @@ public class UserCreateErr  implements Serializable{
     private String confirmPasswordNotMatch;
      
 
-    public UserCreateErr() {
+    public UserCreateError() {
     }
 
-    public UserCreateErr(String emailEmpty, String emailNotValid, String nameEmpty, String passwordEmpty, String confirmPasswordEmpty, String confirmPasswordNotMatch, String emailIsExits) {
+    public UserCreateError(String emailEmpty, String emailNotValid, String nameEmpty, String passwordEmpty, String confirmPasswordEmpty, String confirmPasswordNotMatch, String emailIsExits) {
         this.emailEmpty = emailEmpty;
         this.emailNotValid = emailNotValid;
         this.nameEmpty = nameEmpty;

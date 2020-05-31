@@ -69,7 +69,7 @@ public class SearchQuestionServlet extends HttpServlet {
                     questionDAO.searchQuestionBySubject(searchValue, status, pageIndex, pageSize);
 
                     List<QuestionDTO> listQuestion = questionDAO.getListQuestion();
-                    int countListQuestion = questionDAO.getTotalPageBySubjectID(searchValue, status);
+                    int countListQuestion = questionDAO.countQuestionBySubjectID(searchValue, status);
 
                     endPage = countListQuestion / pageSize;
 
@@ -83,7 +83,7 @@ public class SearchQuestionServlet extends HttpServlet {
                 } else {
                     questionDAO.searchQuestionByName(searchValue, status, pageIndex, pageSize);
                     List<QuestionDTO> listQuestion = questionDAO.getListQuestion();
-                    int countListQuestion = questionDAO.getTotalPageByQuestionName(searchValue, status);
+                    int countListQuestion = questionDAO.countQuestionByQuestionName(searchValue, status);
 
                     endPage = countListQuestion / pageSize;
 

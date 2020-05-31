@@ -17,7 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import phuongntd.user.UserCreateErr;
+import phuongntd.user.UserCreateError;
 import phuongntd.user.UserDAO;
 import phuongntd.utils.EmailValidate;
 
@@ -49,7 +49,7 @@ public class CreateNewAccountServlet extends HttpServlet {
 
         String url = CREATE_ERROR_PAGE;
 
-        UserCreateErr errors = new UserCreateErr();
+        UserCreateError errors = new UserCreateError();
         boolean foundErr = false;
         try  {
             if (email.equals("")) {

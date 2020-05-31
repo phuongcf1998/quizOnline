@@ -13,14 +13,15 @@ import java.sql.Time;
  *
  * @author Yun
  */
-public class HistoryDTO implements Serializable{
+public class HistoryDTO implements Serializable {
+
     private String userEmail;
     private String subjectID;
     private double point;
     private int correctAnswers;
     private Time time;
     private Date date;
-    
+
     public HistoryDTO() {
     }
 
@@ -117,10 +118,4 @@ public class HistoryDTO implements Serializable{
         this.date = date;
     }
 
-   
-  
-    
-    
-    
-    
 }

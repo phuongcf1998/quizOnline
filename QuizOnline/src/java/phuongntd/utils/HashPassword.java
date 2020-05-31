@@ -5,6 +5,7 @@
  */
 package phuongntd.utils;
 
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -12,8 +13,8 @@ import java.security.NoSuchAlgorithmException;
  *
  * @author Yun
  */
-public class HashPassword {
-   public static String sha256(String input) throws NoSuchAlgorithmException {
+public class HashPassword implements Serializable{
+   public static String hashStringToSHA256(String input) throws NoSuchAlgorithmException {
         MessageDigest mDigest = MessageDigest.getInstance("SHA-256");
         byte[] result = mDigest.digest(input.getBytes());
         StringBuilder sb = new StringBuilder();

@@ -12,11 +12,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import javax.naming.NamingException;
 import phuongntd.utils.DBUtils;
-import phuongntd.utils.TimeCaculator;
 
 /**
  *
@@ -68,7 +68,7 @@ public class HistoryDAO implements Serializable {
 
     }
 
-    public void getQuizHistoryByEmail(String email) throws SQLException, NamingException {
+    public void getAllQuizHistoryByEmail(String email, int pageIndex, int pageSize) throws SQLException, NamingException {
         Connection conn = null;
         PreparedStatement stm = null;
         ResultSet rs = null;
@@ -76,9 +76,12 @@ public class HistoryDAO implements Serializable {
             conn = DBUtils.makeConnection();
             if (conn != null) {
                 String sql = "Select subjectID ,point,num_of_correct_answer,"
-                        + "time ,date from tbl_QuizHistory where userEmail = ? ";
+                        + "time ,date from tbl_QuizHistory where userEmail = ? ORDER BY point"
+                        + " OFFSET ? ROWS FETCH NEXT ? ROW ONLY ";
                 stm = conn.prepareStatement(sql);
                 stm.setString(1, email);
+                stm.setInt(2, (pageIndex - 1) * pageSize);
+                stm.setInt(3, pageSize);
 
                 rs = stm.executeQuery();
                 while (rs.next()) {
@@ -122,7 +125,7 @@ public class HistoryDAO implements Serializable {
                         + "subjectID IN "
                         + "(SELECT subjectID FROM tbl_Subject "
                         + "WHERE subjectName LIKE ? ) "
-                        + "ORDER BY point DESC "
+                        + "ORDER BY point "
                         + "OFFSET ? ROWS FETCH NEXT ? ROW ONLY";
                 stm = conn.prepareStatement(sql);
                 stm.setString(1, email);
@@ -157,7 +160,7 @@ public class HistoryDAO implements Serializable {
         }
     }
 
-    public int getTotalPage(String searchValue, String email) throws NamingException, SQLException {
+    public int countHistoryForSearch(String searchValue, String email) throws NamingException, SQLException {
         Connection conn = null;
         PreparedStatement stm = null;
         ResultSet rs = null;
@@ -173,6 +176,38 @@ public class HistoryDAO implements Serializable {
                 stm = conn.prepareStatement(sql);
                 stm.setString(1, "%" + searchValue + "%");
                 stm.setString(2, email);
+                rs = stm.executeQuery();
+                while (rs.next()) {
+                    return rs.getInt(1);
+
+                }
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stm != null) {
+                stm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+        return 0;
+    }
+
+    public int countHistoryForShowAll(String email) throws NamingException, SQLException {
+        Connection conn = null;
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBUtils.makeConnection();
+            if (conn != null) {
+                String sql = "SELECT COUNT(id) FROM tbl_QuizHistory WHERE userEmail = ?";
+                stm = conn.prepareStatement(sql);
+
+                stm.setString(1, email);
                 rs = stm.executeQuery();
                 while (rs.next()) {
                     return rs.getInt(1);

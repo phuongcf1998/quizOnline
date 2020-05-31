@@ -30,7 +30,7 @@ public class UserDAO implements Serializable {
 
         try {
             conn = DBUtils.makeConnection();
-            String hashPassword = HashPassword.sha256(password);
+            String hashPassword = HashPassword.hashStringToSHA256(password);
 
             if (conn != null) {
                 String sql = "Select email , name , password , role , status from tbl_User where email = ? and password = ? ";
@@ -74,7 +74,7 @@ public class UserDAO implements Serializable {
         Connection conn = null;
         PreparedStatement stm = null;
 
-        String passwordHash = HashPassword.sha256(password);
+        String passwordHash = HashPassword.hashStringToSHA256(password);
 
         try {
             conn = DBUtils.makeConnection();

@@ -24,7 +24,7 @@ import phuongntd.history.HistoryDTO;
  */
 public class SearchHistoryServlet extends HttpServlet {
 
-    private final String SHOW_SEARCH_PAGE = "quizHistory.jsp";
+    private final String SHOW_SEARCH_PAGE = "quiz_history.jsp";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -57,7 +57,7 @@ public class SearchHistoryServlet extends HttpServlet {
 
                 dao.searchHistoryBySubject(searchValue, emailUser, pageIndex, pageSize);
                 List<HistoryDTO> listHistory = dao.getListQuizHistory();
-                int countListHistory = dao.getTotalPage(searchValue, emailUser);
+                int countListHistory = dao.countHistoryForSearch(searchValue, emailUser);
                 endPage = countListHistory / pageSize;
 
                 if (countListHistory % pageSize != 0) {
@@ -65,7 +65,8 @@ public class SearchHistoryServlet extends HttpServlet {
                 }
 
                 request.setAttribute("SEARCH_RESULT", listHistory);
-                request.setAttribute("END_PAGE", endPage);
+                request.setAttribute("END_PAGE_SEARCH", endPage);
+                request.setAttribute("CURRENT_PAGE_SEARCH", pageIndex);
             }
 
         } catch (SQLException ex) {

@@ -5,13 +5,14 @@
  */
 package phuongntd.utils;
 
+import java.io.Serializable;
 import java.util.regex.Pattern;
 
 /**
  *
  * @author Yun
  */
-public class EmailValidate {
+public class EmailValidate implements Serializable{
 
     public static boolean validEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."

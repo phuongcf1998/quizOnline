@@ -13,7 +13,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.naming.NamingException;
-import phuongntd.question.QuestionDTO;
 import phuongntd.utils.DBUtils;
 
 /**
@@ -96,7 +95,6 @@ public class SubjectDAO implements Serializable {
         Connection conn = null;
         PreparedStatement stm = null;
         ResultSet rs = null;
-        List<String> result = new ArrayList<>();
         try {
             conn = DBUtils.makeConnection();
             if (conn != null) {

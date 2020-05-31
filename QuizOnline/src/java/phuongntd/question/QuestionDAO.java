@@ -16,12 +16,15 @@ import java.util.List;
 import javax.naming.NamingException;
 import phuongntd.utils.DBUtils;
 import phuongntd.utils.TimeCaculator;
+import java.util.Calendar;
 
 /**
  *
  * @author Yun
  */
 public class QuestionDAO implements Serializable {
+
+    Calendar calendar = Calendar.getInstance();
 
     List<QuestionDTO> listQuestion;
 
@@ -325,7 +328,7 @@ public class QuestionDAO implements Serializable {
         return result;
     }
 
-    public int getTotalPageByQuestionName(String questionName, int status) throws NamingException, SQLException {
+    public int countQuestionByQuestionName(String questionName, int status) throws NamingException, SQLException {
         Connection conn = null;
         PreparedStatement stm = null;
         ResultSet rs = null;
@@ -359,7 +362,7 @@ public class QuestionDAO implements Serializable {
         return 0;
     }
 
-    public int getTotalPageBySubjectID(String subjectID, int status) throws NamingException, SQLException {
+    public int countQuestionBySubjectID(String subjectID, int status) throws NamingException, SQLException {
         Connection conn = null;
         PreparedStatement stm = null;
         ResultSet rs = null;

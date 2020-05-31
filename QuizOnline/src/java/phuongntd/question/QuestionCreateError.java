@@ -11,7 +11,7 @@ import java.io.Serializable;
  *
  * @author Yun
  */
-public class QuestionCreateErr implements Serializable {
+public class QuestionCreateError implements Serializable {
     private String questionIdEmpty;
     private String questionIdIsExits;
     private String questionExceededLength;
@@ -22,10 +22,10 @@ public class QuestionCreateErr implements Serializable {
     private String answer4Empty;
     private String answerCorrectEmpty;
 
-    public QuestionCreateErr() {
+    public QuestionCreateError() {
     }
 
-    public QuestionCreateErr(String questionIdEmpty, String questionIdIsExits, String questionExceededLength, String questionContentEmpty, String answer1Empty, String answer2Empty, String answer3Empty, String answer4Empty, String answerCorrectEmpty) {
+    public QuestionCreateError(String questionIdEmpty, String questionIdIsExits, String questionExceededLength, String questionContentEmpty, String answer1Empty, String answer2Empty, String answer3Empty, String answer4Empty, String answerCorrectEmpty) {
         this.questionIdEmpty = questionIdEmpty;
         this.questionIdIsExits = questionIdIsExits;
         this.questionExceededLength = questionExceededLength;

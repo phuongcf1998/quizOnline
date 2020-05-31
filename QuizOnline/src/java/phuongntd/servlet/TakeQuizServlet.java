@@ -25,7 +25,7 @@ import phuongntd.subject.SubjectDAO;
  */
 public class TakeQuizServlet extends HttpServlet {
 
-    private final String QUIZ_PAGE = "quizPage.jsp";
+    private final String QUIZ_PAGE = "quiz_page.jsp";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

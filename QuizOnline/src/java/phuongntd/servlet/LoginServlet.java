@@ -27,7 +27,7 @@ import phuongntd.user.UserDTO;
 public class LoginServlet extends HttpServlet {
 
     private final String INVALID_PAGE = "invalid.html";
-    private final String ACCESS_DENIED_PAGE = "accessDenied.html";
+    private final String ACCESS_DENIED_PAGE = "access_denied.html";
     private final String HOME_STUDENT = "home_student.jsp";
     private final String HOME_ADMIN = "home_admin.jsp";
 

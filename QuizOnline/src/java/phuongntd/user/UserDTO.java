@@ -5,11 +5,13 @@
  */
 package phuongntd.user;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Yun
  */
-public class UserDTO {
+public class UserDTO implements Serializable{
     private String email;
     private String name;
     private String password;

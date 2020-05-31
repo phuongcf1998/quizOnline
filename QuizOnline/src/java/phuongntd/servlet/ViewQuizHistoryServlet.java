@@ -26,7 +26,7 @@ import phuongntd.user.UserDTO;
  */
 public class ViewQuizHistoryServlet extends HttpServlet {
 
-    private final String QUIZ_HISTORY = "quizHistory.jsp";
+    private final String QUIZ_HISTORY = "quiz_history.jsp";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,16 +41,32 @@ public class ViewQuizHistoryServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
+        int pageIndex = 1;
+        if (request.getParameter("page") != null) {
+            pageIndex = Integer.parseInt(request.getParameter("page"));
+        }
+        System.out.println(pageIndex);
         String url = QUIZ_HISTORY;
         try {
             HttpSession session = request.getSession(false);
             if (session != null) {
+                int pageSize = 10;
+                int endPage = 0;
                 UserDTO userInfo = (UserDTO) session.getAttribute("STUDENT");
                 HistoryDAO dao = new HistoryDAO();
-                dao.getQuizHistoryByEmail(userInfo.getEmail());
+                int countListHistory = dao.countHistoryForShowAll(userInfo.getEmail());
+
+                endPage = countListHistory / pageSize;
+
+                if (countListHistory % pageSize != 0) {
+                    endPage++;
+                }
+                dao.getAllQuizHistoryByEmail(userInfo.getEmail(), pageIndex, pageSize);
                 List<HistoryDTO> listQuizHistory = dao.getListQuizHistory();
-                
+
                 request.setAttribute("HISTORY_LIST", listQuizHistory);
+                request.setAttribute("END_PAGE_ALL", endPage);
+                request.setAttribute("CURRENT_PAGE_SHOW", pageIndex);
             }
         } catch (SQLException ex) {
             log("ViewQuizHistoryServlet_SQLException " + ex.getMessage());

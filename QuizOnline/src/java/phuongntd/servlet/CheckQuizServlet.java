@@ -24,6 +24,7 @@ import phuongntd.history.HistoryDAO;
 import phuongntd.question.QuestionDAO;
 import phuongntd.user.UserDTO;
 import phuongntd.utils.TimeCaculator;
+import phuongntd.utils.TimeTakeQuiz;
 
 /**
  *
@@ -31,7 +32,8 @@ import phuongntd.utils.TimeCaculator;
  */
 public class CheckQuizServlet extends HttpServlet {
 
-    private final String QUIZ_RESULT = "quizResult.jsp";
+    private final String QUIZ_RESULT = "quiz_result.jsp";
+    private final String QUIZ_ERROR = "quiz_error.html";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -54,10 +56,17 @@ public class CheckQuizServlet extends HttpServlet {
         int numberQuestionCorrect = 0;
         String timeRemaining = request.getParameter("txtTimeRemaining");
         String timeQuiz = request.getParameter("txtQuizTime");
-        Time timeTakeQuiz = TimeCaculator.convertTotalSecondToTime(timeRemaining, timeQuiz + ":" + "00");
+        Time timeTakeQuiz = null;
+        String url = QUIZ_RESULT;
+        try {
+            timeTakeQuiz = TimeTakeQuiz.convertTotalSecondToTime(timeRemaining, timeQuiz + ":" + "00");
+        } catch (ParseException ex) {
+            url = QUIZ_ERROR;
+
+        }
         Date currentDate = (Date) TimeCaculator.getCurrentDate();
         String subjectID = request.getParameter("subjectID");
-        String url = QUIZ_RESULT;
+
         try {
             QuestionDAO questionDAO = new QuestionDAO();
             System.out.println(timeQuiz);

@@ -6,7 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -36,11 +36,27 @@
         <h1 style="color: red">Quiz History</h1>    
         <a href="home_student.jsp">Go back</a>
         <c:set var="searchResult" value="${requestScope.SEARCH_RESULT}"/>
-        <c:set var="endPage" value="${requestScope.END_PAGE}"/>
+        <c:set var="endPageSearch" value="${requestScope.END_PAGE_SEARCH}"/>
+        <c:set var="endPageAll" value="${requestScope.END_PAGE_ALL}"/>
         <c:set var="listQuizHistory" value="${requestScope.HISTORY_LIST}"/>
         <c:set var="searchValue" value="${param.txtSearchValue}"/>
         <c:set var="emailUser" value="${sessionScope.STUDENT.email}"/>
+        <c:set var="currentPageSearch" value="${requestScope.CURRENT_PAGE_SEARCH}" />
+        <c:set var="currentPageShow" value="${requestScope.CURRENT_PAGE_SHOW}" />
 
+
+        <c:catch var="ex">
+            <sql:setDataSource var="con" dataSource="QuizOnline" />
+            <c:if test="${not empty con}">
+                <sql:query var="rs" dataSource="${con}">
+                    Select subjectID,subjectName,numberQuestion from tbl_Subject 
+                </sql:query>
+            </c:if>
+        </c:catch>
+        <c:if test="${not empty ex}">
+            <font color="red"> Status Occurs errors</font>
+
+        </c:if>
 
         <div class="paging">
             <h1>Search History (subjectID)  </h1>
@@ -64,10 +80,11 @@
                 <table   border="1">
                     <thead>
                         <tr>
-                            <th>No.</th>
                             <th>Subject ID</th>
+                            <th>Subject Name</th>
+                            <th>Number Question</th>
                             <th>Point</th>
-                            <th>Correct Answer</th>
+                            <th>Number Correct Answer</th>
                             <th>Time take quiz</th>
                             <th>Date take quiz</th>
                         </tr>
@@ -77,10 +94,22 @@
 
                             <tr>
                                 <td>
-                                    ${counter.count}
+                                    ${dto.subjectID}
+
                                 </td>
                                 <td>
-                                    ${dto.subjectID}
+                                    <c:forEach var="row" items="${rs.rows}">
+                                        <c:if test="${row.subjectID == dto.subjectID}">
+                                            ${row.subjectName}
+                                        </c:if>
+                                    </c:forEach>
+                                </td>
+                                <td>
+                                    <c:forEach var="row" items="${rs.rows}">
+                                        <c:if test="${row.subjectID == dto.subjectID}">
+                                            ${row.numberQuestion}
+                                        </c:if>
+                                    </c:forEach>
                                 </td>
                                 <td>
                                     ${dto.point}
@@ -116,10 +145,12 @@
                     <table   border="1">
                         <thead>
                             <tr>
-                                <th>No.</th>
+
                                 <th>Subject ID</th>
+                                <th>Subject Name</th>
+                                <th>Number Question</th>
                                 <th>Point</th>
-                                <th>Correct Answer</th>
+                                <th>Number Correct Answer</th>
                                 <th>Time take quiz</th>
                                 <th>Date take quiz</th>
                             </tr>
@@ -129,10 +160,22 @@
 
                                 <tr>
                                     <td>
-                                        ${counter.count}
+                                        ${dto.subjectID}
+
                                     </td>
                                     <td>
-                                        ${dto.subjectID}
+                                        <c:forEach var="row" items="${rs.rows}">
+                                            <c:if test="${row.subjectID == dto.subjectID}">
+                                                ${row.subjectName}
+                                            </c:if>
+                                        </c:forEach>
+                                    </td>
+                                    <td>
+                                        <c:forEach var="row" items="${rs.rows}">
+                                            <c:if test="${row.subjectID == dto.subjectID}">
+                                                ${row.numberQuestion}
+                                            </c:if>
+                                        </c:forEach>
                                     </td>
                                     <td>
                                         ${dto.point}
@@ -154,6 +197,14 @@
                             </c:forEach>
                         </tbody>
                     </table>
+                    <c:url var="viewQuizHistoryAgain" value="ProcessServlet">
+                        <c:param name="btAction" value="View Quiz History" />
+                    </c:url>
+
+
+                    <div class="paging" style="margin-top: 20px;">
+                        <a href="${viewQuizHistoryAgain}"><font color="blue"> View All History </font></a><br/>
+                    </div>
                 </div>
 
             </c:if>
@@ -161,6 +212,15 @@
 
                 <div class="paging">
                     <h1>No record is matched !!!</h1>
+                </div>
+
+                <c:url var="viewQuizHistoryAgain" value="ProcessServlet">
+                    <c:param name="btAction" value="View Quiz History" />
+                </c:url>
+
+
+                <div class="paging" style="margin-top: 20px;">
+                    <a href="${viewQuizHistoryAgain}"><font color="blue"> View All History </font></a><br/>
                 </div>
             </c:if>
         </c:if>
@@ -180,19 +240,39 @@
 
 
         <div class="paging">
-            <c:forEach begin="1" end="${endPage}" var="i">
-                <c:url var="currentPageLink" value="SearchHistoryServlet">
+            <c:forEach begin="1" end="${endPageAll}" var="i">
+                <c:url var="currentPageShowLink" value="ViewQuizHistoryServlet">
+                    <c:param name="page" value="${i}" />
+                </c:url>
+                <a id="historyPage${i}"  style="margin: 5px" href="${currentPageShowLink}">${i}</a>
+            </c:forEach>
+
+        </div>
+
+        <div class="paging">
+            <c:forEach begin="1" end="${endPageSearch}" var="i">
+                <c:url var="currentPageSearchLink" value="SearchHistoryServlet">
                     <c:param name="txtSearchValue" value="${param.txtSearchValue}"/>
                     <c:param name="page" value="${i}" />
                     <c:param name="txtEmailUser" value="${emailUser}" />
 
                 </c:url>
-                <a  style="margin: 5px" href="${currentPageLink}">${i}</a>
+                <a id="searchPage${i}" style="margin: 5px" href="${currentPageSearchLink}">${i}</a>
             </c:forEach>
 
         </div>
 
 
+
+
+        <script>
+
+            <c:if test="${not empty currentPageSearch }">
+
+            document.getElementById("searchPage${currentPageSearch}").style.color = 'red';
+            </c:if>
+            document.getElementById("historyPage${currentPageShow}").style.color = 'red';
+        </script>
 
 
     </body>

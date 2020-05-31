@@ -14,7 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import phuongntd.question.QuestionCreateErr;
+import phuongntd.question.QuestionCreateError;
 import phuongntd.question.QuestionDAO;
 
 /**
@@ -50,7 +50,7 @@ public class CreateNewQuestionServlet extends HttpServlet {
 
         String url = CREATE_ERROR_PAGE;
 
-        QuestionCreateErr errors = new QuestionCreateErr();
+        QuestionCreateError errors = new QuestionCreateError();
         boolean foundErr = false;
         try {
             if (questionID.equals("")) {

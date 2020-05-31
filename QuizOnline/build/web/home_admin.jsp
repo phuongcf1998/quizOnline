@@ -6,7 +6,6 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
 <!DOCTYPE html>
 <html>
@@ -52,12 +51,12 @@
             <c:param name="btAction" value="LogOut" />
         </c:url>
 
-        
+
         <c:catch var="ex">
             <sql:setDataSource var="con" dataSource="QuizOnline" />
             <c:if test="${not empty con}">
                 <sql:query var="rsStatus" dataSource="${con}">
-                    Select status,description from tbl_Status order by status offset 1 rows
+                    Select status,description from tbl_Status order by status DESC
                 </sql:query>
             </c:if>
         </c:catch>
@@ -127,7 +126,7 @@
 
                     <table style="width: 100%;margin-top: 30px;" border="1">
                         <thead>
-                            <tr><th colspan="10"><p style="color:red">${subject.subjectID} - ${subject.subjectName}</p></th></tr>
+                            <tr><th colspan="12"><p style="color:red">${subject.subjectID} - ${subject.subjectName}</p></th></tr>
                         </thead>
                         <thead>
                             <tr>
@@ -140,6 +139,7 @@
                                 <th>Answer 3</th>
                                 <th>Answer 4</th>
                                 <th>Answer Correct</th>
+                                <th>Create Date</th>
                                     <c:if test="${param.slStatus != 3}">
                                     <th>Delete</th>
                                     </c:if>
@@ -205,6 +205,9 @@
                                                          </c:if> >Answer 4</option>
                                             </select>
                                         </td>
+                                        <td>
+                                            ${dto.createDate}
+                                        </td>
                                         <c:if test="${dto.status != 3}">
                                             <td>
 
@@ -244,7 +247,9 @@
 
         <c:if test="${empty searchResult}">
 
-            <h1>No record is matched !!!</h1>
+            <div class="paging">
+                <h1>No record is matched !!!</h1>
+            </div>
         </c:if>
 
         <script
@@ -253,11 +258,11 @@
         crossorigin="anonymous"></script>
 
         <script>
-            
-            
-            document.getElementById("${currentPage}").style.color='red';
-            
-            
+
+
+            document.getElementById("${currentPage}").style.color = 'red';
+
+
 
             $("table").each(function () {
                 if ($(this).find("tbody").html().trim().length === 0) {
