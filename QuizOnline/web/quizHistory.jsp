@@ -45,7 +45,7 @@
         <div class="paging">
             <h1>Search History (subjectID)  </h1>
         </div>
-        
+
         <form class="paging" action="ProcessServlet">
             <input type="text"  name="txtSearchValue" value="${param.txtSearchValue}" size="53"/><br/><br/>
             <input type="hidden" name="txtEmailUser" value="${emailUser}"/>
@@ -57,8 +57,8 @@
 
 
 
-        <c:if test="${not empty listQuizHistory and empty searchResult}">
-         
+        <c:if test="${not empty listQuizHistory and empty searchResult   }">
+
             <div class="flex-container">
                 <h3 style="font-size: 20px"> All History Records</h3>
                 <table   border="1">
@@ -112,6 +112,7 @@
             <c:if test="${not empty searchResult}">
 
                 <div class="flex-container">
+                    <h3 style="font-size: 20px"> Result Search</h3>
                     <table   border="1">
                         <thead>
                             <tr>
@@ -162,6 +163,19 @@
                     <h1>No record is matched !!!</h1>
                 </div>
             </c:if>
+        </c:if>
+
+        <c:if test="${empty searchValue and empty listQuizHistory}">
+
+            <c:url var="viewQuizHistoryAgain" value="ProcessServlet">
+                <c:param name="btAction" value="View Quiz History" />
+            </c:url>
+
+
+            <div class="paging">
+                <a href="${viewQuizHistoryAgain}"><font color="blue"> View All History </font></a><br/>
+            </div>
+
         </c:if>
 
 

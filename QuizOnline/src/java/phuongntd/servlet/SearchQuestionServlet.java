@@ -47,52 +47,55 @@ public class SearchQuestionServlet extends HttpServlet {
             pageIndex = Integer.parseInt(request.getParameter("page"));
         }
         int status = Integer.parseInt(request.getParameter("slStatus"));
-        int pageSize = 20;
-        int endPage = 0;
+
         boolean isContainSubject = false;
         String url = SHOW_SEARCH_PAGE;
 
         try {
-            QuestionDAO questionDAO = new QuestionDAO();
-            SubjectDAO subjectDAO = new SubjectDAO();
-            subjectDAO.getAllSubject();
-            List<SubjectDTO> listAllSubject = subjectDAO.getListSubject();
-            for (SubjectDTO subject : listAllSubject) {
-                if (searchValue.equals(subject.getSubjectID())) {
-                    isContainSubject = true;
-                    break;
+            if (searchValue.length() > 0) {
+                int pageSize = 20;
+                int endPage = 0;
+                QuestionDAO questionDAO = new QuestionDAO();
+                SubjectDAO subjectDAO = new SubjectDAO();
+                subjectDAO.getAllSubject();
+                List<SubjectDTO> listAllSubject = subjectDAO.getListSubject();
+                for (SubjectDTO subject : listAllSubject) {
+                    if (searchValue.equals(subject.getSubjectID())) {
+                        isContainSubject = true;
+                        break;
+                    }
                 }
-            }
-            if (isContainSubject) {
-                questionDAO.searchQuestionBySubject(searchValue, status, pageIndex, pageSize);
+                if (isContainSubject) {
+                    questionDAO.searchQuestionBySubject(searchValue, status, pageIndex, pageSize);
 
-                List<QuestionDTO> listQuestion = questionDAO.getListQuestion();
-                int countListQuestion = questionDAO.getTotalPageBySubjectID(searchValue, status);
+                    List<QuestionDTO> listQuestion = questionDAO.getListQuestion();
+                    int countListQuestion = questionDAO.getTotalPageBySubjectID(searchValue, status);
 
-                endPage = countListQuestion / pageSize;
+                    endPage = countListQuestion / pageSize;
 
-                if (countListQuestion % pageSize != 0) {
-                    endPage++;
+                    if (countListQuestion % pageSize != 0) {
+                        endPage++;
+                    }
+                    request.setAttribute("SEARCH_RESULT", listQuestion);
+                    request.setAttribute("LIST_SUBJECT", listAllSubject);
+                    request.setAttribute("END_PAGE", endPage);
+                    request.setAttribute("CURRENT_PAGE", pageIndex);
+                } else {
+                    questionDAO.searchQuestionByName(searchValue, status, pageIndex, pageSize);
+                    List<QuestionDTO> listQuestion = questionDAO.getListQuestion();
+                    int countListQuestion = questionDAO.getTotalPageByQuestionName(searchValue, status);
+
+                    endPage = countListQuestion / pageSize;
+
+                    if (countListQuestion % pageSize != 0) {
+                        endPage++;
+                    }
+
+                    request.setAttribute("SEARCH_RESULT", listQuestion);
+                    request.setAttribute("LIST_SUBJECT", listAllSubject);
+                    request.setAttribute("END_PAGE", endPage);
+                    request.setAttribute("CURRENT_PAGE", pageIndex);
                 }
-                request.setAttribute("SEARCH_RESULT", listQuestion);
-                request.setAttribute("LIST_SUBJECT", listAllSubject);
-                request.setAttribute("END_PAGE", endPage);
-                request.setAttribute("CURRENT_PAGE", pageIndex);
-            } else {
-                questionDAO.searchQuestionByName(searchValue, status, pageIndex, pageSize);
-                List<QuestionDTO> listQuestion = questionDAO.getListQuestion();
-                int countListQuestion = questionDAO.getTotalPageByQuestionName(searchValue, status);
-
-                endPage = countListQuestion / pageSize;
-
-                if (countListQuestion % pageSize != 0) {
-                    endPage++;
-                }
-                
-                request.setAttribute("SEARCH_RESULT", listQuestion);
-                request.setAttribute("LIST_SUBJECT", listAllSubject);
-                request.setAttribute("END_PAGE", endPage);
-                request.setAttribute("CURRENT_PAGE", pageIndex);
             }
 
         } catch (SQLException ex) {

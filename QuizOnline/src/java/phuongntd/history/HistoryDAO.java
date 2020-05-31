@@ -30,7 +30,7 @@ public class HistoryDAO implements Serializable {
         return listQuizHistory;
     }
 
-    public boolean saveQuizStudentTake(String userEmail, String subjectID, double point, int num_of_correct_answer, Time time,Date date) throws NamingException, SQLException {
+    public boolean saveQuizStudentTake(String userEmail, String subjectID, double point, int num_of_correct_answer, Time time, Date date) throws NamingException, SQLException {
 
         Connection conn = null;
         PreparedStatement stm = null;
@@ -112,21 +112,22 @@ public class HistoryDAO implements Serializable {
         Connection conn = null;
         PreparedStatement stm = null;
         ResultSet rs = null;
-        
+
         try {
             conn = DBUtils.makeConnection();
             if (conn != null) {
-                String sql = "SELECT subjectID,point,num_of_correct_answer,time,date "
-                        + "FROM tbl_QuizHistory WHERE "
-                        + "subjectID = ? AND userEmail = ? "
-                        + "ORDER BY point "
-                        + "OFFSET ? ROWS "
-                        + "FETCH NEXT ? "
-                        + "ROW ONLY";
+                String sql = "SELECT subjectID,point,num_of_correct_answer,"
+                        + "time,date FROM tbl_QuizHistory "
+                        + "WHERE userEmail= ? and "
+                        + "subjectID IN "
+                        + "(SELECT subjectID FROM tbl_Subject "
+                        + "WHERE subjectName LIKE ? ) "
+                        + "ORDER BY point DESC "
+                        + "OFFSET ? ROWS FETCH NEXT ? ROW ONLY";
                 stm = conn.prepareStatement(sql);
-                stm.setString(1, searchValue);
-                stm.setString(2, email);
-                stm.setInt(3, (pageIndex-1)*pageSize);
+                stm.setString(1, email);
+                stm.setString(2, "%" + searchValue + "%");
+                stm.setInt(3, (pageIndex - 1) * pageSize);
                 stm.setInt(4, pageSize);
                 rs = stm.executeQuery();
                 while (rs.next()) {
@@ -156,7 +157,7 @@ public class HistoryDAO implements Serializable {
         }
     }
 
-    public int getTotalPage(String subjectID, String email) throws NamingException, SQLException {
+    public int getTotalPage(String searchValue, String email) throws NamingException, SQLException {
         Connection conn = null;
         PreparedStatement stm = null;
         ResultSet rs = null;
@@ -165,10 +166,12 @@ public class HistoryDAO implements Serializable {
             conn = DBUtils.makeConnection();
             if (conn != null) {
                 String sql = "SELECT COUNT(id) FROM tbl_QuizHistory WHERE "
-                        + "subjectID = ? and userEmail = ?";
+                        + "subjectID IN "
+                        + "(SELECT subjectID FROM tbl_Subject "
+                        + "WHERE subjectName LIKE ? ) and userEmail = ?";
 
                 stm = conn.prepareStatement(sql);
-                stm.setString(1, subjectID);
+                stm.setString(1, "%" + searchValue + "%");
                 stm.setString(2, email);
                 rs = stm.executeQuery();
                 while (rs.next()) {

@@ -46,24 +46,27 @@ public class SearchHistoryServlet extends HttpServlet {
         if (request.getParameter("page") != null) {
             pageIndex = Integer.parseInt(request.getParameter("page"));
         }
-        int pageSize = 5;
-        int endPage = 0;
+
         String url = SHOW_SEARCH_PAGE;
         try {
 
-            HistoryDAO dao = new HistoryDAO();
+            if (searchValue.length() > 0) {
+                int pageSize = 5;
+                int endPage = 0;
+                HistoryDAO dao = new HistoryDAO();
 
-            dao.searchHistoryBySubject(searchValue, emailUser,pageIndex,pageSize);
-            List<HistoryDTO> listHistory = dao.getListQuizHistory();
-            int countListHistory = dao.getTotalPage(searchValue, emailUser);
-            endPage = countListHistory / pageSize;
+                dao.searchHistoryBySubject(searchValue, emailUser, pageIndex, pageSize);
+                List<HistoryDTO> listHistory = dao.getListQuizHistory();
+                int countListHistory = dao.getTotalPage(searchValue, emailUser);
+                endPage = countListHistory / pageSize;
 
-            if (countListHistory % pageSize != 0) {
-                endPage++;
+                if (countListHistory % pageSize != 0) {
+                    endPage++;
+                }
+
+                request.setAttribute("SEARCH_RESULT", listHistory);
+                request.setAttribute("END_PAGE", endPage);
             }
-
-            request.setAttribute("SEARCH_RESULT", listHistory);
-            request.setAttribute("END_PAGE", endPage);
 
         } catch (SQLException ex) {
             log("SearchHistoryServlet_SQLException " + ex.getMessage());
