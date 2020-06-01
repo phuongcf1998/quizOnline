@@ -5,6 +5,7 @@
  */
 package phuongntd.utils;
 
+import java.io.Serializable;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,7 +15,7 @@ import java.util.Date;
  *
  * @author Yun
  */
-public class TimeTakeQuiz {
+public class TimeTakeQuiz implements Serializable {
 
     public static Time convertTotalSecondToTime(String timeRemaining, String timeQuiz) throws ParseException {
 

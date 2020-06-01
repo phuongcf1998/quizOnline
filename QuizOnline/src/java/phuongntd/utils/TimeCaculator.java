@@ -5,13 +5,14 @@
  */
 package phuongntd.utils;
 
+import java.io.Serializable;
 import java.sql.Date;
 
 /**
  *
  * @author Yun
  */
-public class TimeCaculator {
+public class TimeCaculator implements Serializable{
 
 
     public static Date getCurrentDate() {

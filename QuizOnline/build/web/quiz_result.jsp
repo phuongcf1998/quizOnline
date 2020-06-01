@@ -65,7 +65,7 @@
                     <td><font color="red">${correctsAnswer}</font></td>
                 </tr>
                 <tr>
-                    <td>Time</td>
+                    <td>Time take quiz</td>
                     <td><font color="red">${time}</font></td>
                 </tr>
                  <tr>

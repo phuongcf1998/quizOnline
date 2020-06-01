@@ -7,9 +7,9 @@ package phuongntd.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,7 +23,6 @@ import javax.servlet.http.HttpSession;
 import phuongntd.history.HistoryDAO;
 import phuongntd.question.QuestionDAO;
 import phuongntd.user.UserDTO;
-import phuongntd.utils.TimeCaculator;
 import phuongntd.utils.TimeTakeQuiz;
 
 /**
@@ -64,7 +63,8 @@ public class CheckQuizServlet extends HttpServlet {
             url = QUIZ_ERROR;
 
         }
-        Date currentDate = (Date) TimeCaculator.getCurrentDate();
+        Timestamp currentDateTime = new Timestamp(System.currentTimeMillis());
+
         String subjectID = request.getParameter("subjectID");
 
         try {
@@ -90,14 +90,14 @@ public class CheckQuizServlet extends HttpServlet {
             if (session != null) {
                 UserDTO userInfo = (UserDTO) session.getAttribute("STUDENT");
 
-                boolean result = historyDAO.saveQuizStudentTake(userInfo.getEmail(), subjectID, finalPoint, numberQuestionCorrect, timeTakeQuiz, currentDate);
+                historyDAO.saveQuizStudentTake(userInfo.getEmail(), subjectID, finalPoint, numberQuestionCorrect, timeTakeQuiz, currentDateTime);
             }
             request.setAttribute("NUMBER_QUESTION", numberQuestion);
             request.setAttribute("FINAL_POINT", finalPoint);
             request.setAttribute("QUESTIONS_CORRECT", numberQuestionCorrect);
             request.setAttribute("TIME_TAKE_QUIZ", timeTakeQuiz);
             request.setAttribute("SUBJECT_ID", subjectID);
-            request.setAttribute("DATE", currentDate);
+            request.setAttribute("DATE", currentDateTime);
 
         } catch (NamingException ex) {
             log("CheckQuizServlet_NamingException " + ex.getMessage());

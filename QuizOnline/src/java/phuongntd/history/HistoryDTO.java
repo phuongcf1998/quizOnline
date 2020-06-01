@@ -6,8 +6,8 @@
 package phuongntd.history;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.sql.Time;
+import java.sql.Timestamp;
 
 /**
  *
@@ -20,12 +20,12 @@ public class HistoryDTO implements Serializable {
     private double point;
     private int correctAnswers;
     private Time time;
-    private Date date;
+    private Timestamp date;
 
     public HistoryDTO() {
     }
 
-    public HistoryDTO(String userEmail, String subjectID, double point, int correctAnswers, Time time, Date date) {
+    public HistoryDTO(String userEmail, String subjectID, double point, int correctAnswers, Time time, Timestamp date) {
         this.userEmail = userEmail;
         this.subjectID = subjectID;
         this.point = point;
@@ -107,15 +107,15 @@ public class HistoryDTO implements Serializable {
     /**
      * @return the date
      */
-    public Date getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
     /**
      * @param date the date to set
      */
-    public void setDate(Date date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
-
+    
 }

@@ -7,6 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
+<%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -121,7 +122,8 @@
                                     ${dto.time}
                                 </td>
                                 <td>
-                                    ${dto.date}
+                                    <fmt:formatDate type = "both" 
+                                                    dateStyle = "medium" timeStyle = "medium" value = "${dto.date}" />
                                 </td>
 
 
@@ -187,7 +189,8 @@
                                         ${dto.time}
                                     </td>
                                     <td>
-                                        ${dto.date}
+                                        <fmt:formatDate type = "both" 
+                                                    dateStyle = "medium" timeStyle = "medium" value = "${dto.date}" />
                                     </td>
 
 
