@@ -42,7 +42,7 @@
         <c:set var="searchResult" value="${requestScope.SEARCH_RESULT}"/>
         <c:set var="currentPage" value="${requestScope.CURRENT_PAGE}" />
 
-
+        <c:set var="searchOption" value="${requestScope.SEARCH_OPTION}" />
 
         <c:set var="listSubject" value="${requestScope.LIST_SUBJECT}"/>
         <c:set var="searchValue" value="${param.txtSearchValue}"/>
@@ -64,7 +64,9 @@
             <font color="red"> Status Occurs errors</font>
 
         </c:if>
-
+        <c:if test="${empty admin}">
+            <c:redirect url="login.html"></c:redirect>
+        </c:if>
 
         <font style="font-size: 30px" color="red"> Welcome , ${admin} </font><br/>
 
@@ -76,11 +78,14 @@
                 <h1><font color="green">Manage Quiz</font></h1><br/>
             </div>
             <div>
-                <h1>Search Question (name or subject)</h1>
+                <h1>Search Question</h1>
 
                 <div class="flex-child">
                     <form action="ProcessServlet">
                         <input type="text"  name="txtSearchValue" value="${param.txtSearchValue}" size="53"/><br/><br/>
+
+                        <input type="checkbox" id="chkSearchSubject" name="chkSearchSubject" value="subject">
+                        <label for="rdSearchOption"> Change to search by subjectID </label><br> <br/> <br/>
 
                         <input   type="submit" value="Search_Question" name="btAction"/>
                         <br/><br/>
@@ -113,7 +118,9 @@
                     <c:param name="slStatus" value="${param.slStatus}"/>
                     <c:param name="page" value="${i}" />
                     <c:param name="txtSearchValue" value="${searchValue}" />
-
+                    <c:if test="${not empty searchOption}">
+                        <c:param name="chkSearchSubject" value="${searchOption}" />
+                    </c:if>
                 </c:url>
                 <a id="${i}"  style="margin: 5px" href="${currentPageLink}">${i}</a>
             </c:forEach>
@@ -139,8 +146,8 @@
                                 <th>Answer 3</th>
                                 <th>Answer 4</th>
                                 <th>Answer Correct</th>
-                                <th>Create Date</th>
-                                    <c:if test="${param.slStatus != 3}">
+
+                                <c:if test="${param.slStatus != 3}">
                                     <th>Delete</th>
                                     </c:if>
                                 <th>Update</th>
@@ -149,7 +156,7 @@
                         <tbody>
                             <c:forEach var="dto" items="${searchResult}" varStatus="counter">
                                 <c:if test="${subject.subjectID == dto.subjectID}">
-                                <form action="ProcessServlet">
+                                <form action="ProcessServlet" onsubmit="return check(this)">
                                     <tr>
 
                                         <td>
@@ -205,9 +212,7 @@
                                                          </c:if> >Answer 4</option>
                                             </select>
                                         </td>
-                                        <td>
-                                            ${dto.createDate}
-                                        </td>
+
                                         <c:if test="${dto.status != 3}">
                                             <td>
 
@@ -217,6 +222,7 @@
                                                     <c:param name="lastSearchValue" value="${searchValue}" />
                                                     <c:param name="status" value="${param.slStatus}"/>
                                                     <c:param name="page" value="${currentPage}" />
+                                                    <c:param name="searchOption" value="${param.chkSearchSubject}" />
                                                 </c:url>
                                                 <a href="${delLink}">Delete</a>
 
@@ -227,6 +233,7 @@
                                             <input type="hidden" name="txtLastSearchValue" value="${searchValue}" />
                                             <input type="hidden" name="status" value="${param.slStatus}"/>
                                             <input type="hidden" name="page" value="${currentPage}"/>
+                                            <input type="hidden" name="searchOption" value="${param.chkSearchSubject}"/>
 
                                         </td>
                                     </tr>
@@ -252,23 +259,49 @@
             </div>
         </c:if>
 
-        <script
-            src="https://code.jquery.com/jquery-3.5.1.js"
-            integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
-        crossorigin="anonymous"></script>
+            <script src="resource/jquery-3.5.1.js"></script>
 
         <script>
 
+                                    window.onload = function () {
+            <c:if test="${ not empty searchOption}">
+                                        document.getElementById("chkSearchSubject").checked = true;
+            </c:if>
+                                    }
 
-            document.getElementById("${currentPage}").style.color = 'red';
+                                    function check(form) {
+                                        if (form.txtQuestionContent.value.trim() == "") {
+                                            window.alert("Question content is empty");
+                                            return false
+                                        }
+                                        if (form.txtAns1.value.trim() == "") {
+                                            window.alert("Answer 1 is empty");
+                                            return false
+                                        }
+                                        if (form.txtAns2.value.trim() == "") {
+                                            window.alert("Answer 2 is empty");
+                                            return false
+                                        }
+                                        if (form.txtAns3.value.trim() == "") {
+                                            window.alert("Answer 3 is empty");
+                                            return false
+                                        }
+                                        if (form.txtAns4.value.trim() == "") {
+                                            window.alert("Answer 4 is empty");
+                                            return false
+                                        }
+                                    }
+
+
+                                    document.getElementById("${currentPage}").style.color = 'red';
 
 
 
-            $("table").each(function () {
-                if ($(this).find("tbody").html().trim().length === 0) {
-                    $(this).hide()
-                }
-            })
+                                    $("table").each(function () {
+                                        if ($(this).find("tbody").html().trim().length === 0) {
+                                            $(this).hide()
+                                        }
+                                    })
         </script>
     </c:if>
 

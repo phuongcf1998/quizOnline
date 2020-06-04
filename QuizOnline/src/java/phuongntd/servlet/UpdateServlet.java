@@ -47,7 +47,7 @@ public class UpdateServlet extends HttpServlet {
         String page = request.getParameter("page");
         String lastSearchValue = request.getParameter("txtLastSearchValue");
         String url = "";
-
+        String searchOption = request.getParameter("searchOption");
         try {
             switch (ansCorrect) {
                 case "ans1":
@@ -67,9 +67,18 @@ public class UpdateServlet extends HttpServlet {
             QuestionDAO dao = new QuestionDAO();
             boolean result = dao.updateQuestion(questionID, subjectID, questionContent, ans1, ans2, ans3, ans4, ansCorrect);
             if (result) {
-                url = "ProcessServlet?btAction=Search_Question"
-                        + "&txtSearchValue="
-                        + lastSearchValue + "&slStatus=" + status + "&page=" + page;
+
+                if (searchOption.equals("")) {
+                    url = "ProcessServlet?btAction=Search_Question"
+                            + "&txtSearchValue="
+                            + lastSearchValue + "&slStatus=" + status + "&page=" + page;
+
+                } else {
+                    url = "ProcessServlet?btAction=Search_Question"
+                            + "&txtSearchValue="
+                            + lastSearchValue + "&slStatus=" + status + "&page=" + page + "&chkSearchSubject=" + searchOption;
+                }
+
             }
 
         } catch (SQLException ex) {

@@ -26,8 +26,10 @@ import phuongntd.utils.EmailValidate;
  * @author Yun
  */
 public class CreateNewAccountServlet extends HttpServlet {
-        private final String CREATE_ERROR_PAGE = "create_account.jsp";
-        private final String LOGIN_PAGE = "login.html";
+
+    private final String CREATE_ERROR_PAGE = "create_account.jsp";
+    private final String CREATE_SUCCESS_PAGE = "create_account_success.html";
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -51,7 +53,7 @@ public class CreateNewAccountServlet extends HttpServlet {
 
         UserCreateError errors = new UserCreateError();
         boolean foundErr = false;
-        try  {
+        try {
             if (email.equals("")) {
                 foundErr = true;
                 errors.setEmailEmpty("Email is empty");
@@ -68,13 +70,12 @@ public class CreateNewAccountServlet extends HttpServlet {
                 foundErr = true;
                 errors.setPasswordEmpty("Password is empty");
             }
-            
+
             if (confirmPassword.equals("")) {
                 foundErr = true;
                 errors.setConfirmPasswordNotMatch("Confirm password is empty");
             }
 
-            
             if (!confirmPassword.equals(password)) {
                 foundErr = true;
                 errors.setConfirmPasswordNotMatch("Password is not match");
@@ -83,11 +84,11 @@ public class CreateNewAccountServlet extends HttpServlet {
             if (foundErr) {
                 request.setAttribute("CREATE_ACCOUNT_ERR", errors);
 
-            } else{
+            } else {
                 UserDAO dao = new UserDAO();
                 boolean result = dao.createNewUser(email, name, password);
                 if (result) {
-                    url = LOGIN_PAGE;
+                    url = CREATE_SUCCESS_PAGE;
                 }
             }
         } catch (SQLException ex) {
@@ -117,11 +118,11 @@ public class CreateNewAccountServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            try {
-                processRequest(request, response);
-            } catch (NoSuchAlgorithmException ex) {
-                Logger.getLogger(CreateNewAccountServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        try {
+            processRequest(request, response);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(CreateNewAccountServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -135,11 +136,11 @@ public class CreateNewAccountServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            try {
-                processRequest(request, response);
-            } catch (NoSuchAlgorithmException ex) {
-                Logger.getLogger(CreateNewAccountServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        try {
+            processRequest(request, response);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(CreateNewAccountServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

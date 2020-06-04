@@ -27,7 +27,12 @@
     </head>
     <body>
         <c:set var="errors" value="${requestScope.CREATE_QUESTION_ERR}"/>
-
+        <c:set var="admin" value="${sessionScope.ADMIN.name}"/>
+        
+        <c:if test="${empty admin}">
+            <c:redirect url="login.html"></c:redirect>
+        </c:if>
+        
         <c:catch var="ex">
             <sql:setDataSource var="con" dataSource="QuizOnline" />
             <c:if test="${not empty con}">

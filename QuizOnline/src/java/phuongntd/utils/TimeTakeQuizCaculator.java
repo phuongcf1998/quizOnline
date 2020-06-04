@@ -15,7 +15,7 @@ import java.util.Date;
  *
  * @author Yun
  */
-public class TimeTakeQuiz implements Serializable {
+public class TimeTakeQuizCaculator implements Serializable {
 
     public static Time convertTotalSecondToTime(String timeRemaining, String timeQuiz) throws ParseException {
 

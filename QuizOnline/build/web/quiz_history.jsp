@@ -45,6 +45,8 @@
         <c:set var="currentPageSearch" value="${requestScope.CURRENT_PAGE_SEARCH}" />
         <c:set var="currentPageShow" value="${requestScope.CURRENT_PAGE_SHOW}" />
 
+        
+        
 
         <c:catch var="ex">
             <sql:setDataSource var="con" dataSource="QuizOnline" />
@@ -60,7 +62,7 @@
         </c:if>
 
         <div class="paging">
-            <h1>Search History (subjectID)  </h1>
+            <h1>Search History (subject name)  </h1>
         </div>
 
         <form class="paging" action="ProcessServlet">

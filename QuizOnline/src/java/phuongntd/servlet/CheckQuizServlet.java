@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,7 +24,7 @@ import javax.servlet.http.HttpSession;
 import phuongntd.history.HistoryDAO;
 import phuongntd.question.QuestionDAO;
 import phuongntd.user.UserDTO;
-import phuongntd.utils.TimeTakeQuiz;
+import phuongntd.utils.TimeTakeQuizCaculator;
 
 /**
  *
@@ -51,6 +52,7 @@ public class CheckQuizServlet extends HttpServlet {
         double numberQuestionInDouble = Double.parseDouble(request.getParameter("numberQuestion"));
         int numberQuestion = Integer.parseInt(request.getParameter("numberQuestion"));
         double pointPerQuestion = 10 / numberQuestionInDouble;
+        DecimalFormat df = new DecimalFormat("#.00");
         double finalPoint = 0;
         int numberQuestionCorrect = 0;
         String timeRemaining = request.getParameter("txtTimeRemaining");
@@ -58,7 +60,7 @@ public class CheckQuizServlet extends HttpServlet {
         Time timeTakeQuiz = null;
         String url = QUIZ_RESULT;
         try {
-            timeTakeQuiz = TimeTakeQuiz.convertTotalSecondToTime(timeRemaining, timeQuiz + ":" + "00");
+            timeTakeQuiz = TimeTakeQuizCaculator.convertTotalSecondToTime(timeRemaining, timeQuiz + ":" + "00");
         } catch (ParseException ex) {
             url = QUIZ_ERROR;
 
@@ -69,17 +71,16 @@ public class CheckQuizServlet extends HttpServlet {
 
         try {
             QuestionDAO questionDAO = new QuestionDAO();
-            System.out.println(timeQuiz);
-            System.out.println(numberQuestion);
+
             for (int i = 1; i <= numberQuestion; i++) {
 
                 String questionID = request.getParameter("txtQuestionID" + i);
-                String answerByUser = request.getParameter("rdAnsCorrect" + i);
+                String answerByUser = request.getParameter("rdAnswerQuestion" + i);
 
                 String correctAnswer = questionDAO.getQuestionCorrectByQuestionID(questionID);
 
                 if (correctAnswer.equals(answerByUser)) {
-                    finalPoint += pointPerQuestion;
+                    finalPoint += Double.parseDouble(df.format(pointPerQuestion));
                     numberQuestionCorrect++;
                 }
 
@@ -87,7 +88,7 @@ public class CheckQuizServlet extends HttpServlet {
 
             HistoryDAO historyDAO = new HistoryDAO();
             HttpSession session = request.getSession(false);
-            if (session != null) {
+            if (session != null && session.getAttribute("STUDENT") != null) {
                 UserDTO userInfo = (UserDTO) session.getAttribute("STUDENT");
 
                 historyDAO.saveQuizStudentTake(userInfo.getEmail(), subjectID, finalPoint, numberQuestionCorrect, timeTakeQuiz, currentDateTime);

@@ -46,6 +46,21 @@
         <c:set var="listQuestion" value="${requestScope.LIST_QUESTION}"/>
         <c:set var="quizTime" value="${requestScope.QUIZ_TIME}"/>
         <c:set var="subjectID" value="${requestScope.SUBJECT_ID}"/>
+        
+        <c:set var="student" value="${sessionScope.STUDENT.name}"/>
+        
+        <c:if test="${empty student}">
+            <c:redirect url="login.html"></c:redirect>
+        </c:if>
+        
+        <c:if test="${empty listQuestion}">
+            <h2>
+                Sorry , quiz of subject is updating !! Please choose another subject to take quiz !
+            </h2>
+            <a href="home_student.jsp">Go back </a>
+        </c:if>
+        
+        
         <c:if test="${not empty listQuestion}">
             <h3 style="margin-left: 300px;color: red">${subjectID} Quiz</h3>
             <div class="container-btn"> 
@@ -66,13 +81,13 @@
                             <tr>
                                 <td>Select one </td>
                                 <td>
-                                    <input type="radio" id="ans1" name="rdAnsCorrect${i.count}" value="${row.answer_1}">
+                                    <input type="radio" id="ans1" name="rdAnswerQuestion${i.count}" value="${row.answer_1}">
                                     <label for="ans1">${row.answer_1}</label><br>
-                                    <input type="radio" id="ans2" name="rdAnsCorrect${i.count}" value="${row.answer_2}">
+                                    <input type="radio" id="ans2" name="rdAnswerQuestion${i.count}" value="${row.answer_2}">
                                     <label for="ans2">${row.answer_2}</label><br>  
-                                    <input type="radio" id="ans3" name="rdAnsCorrect${i.count}" value="${row.answer_3}">
+                                    <input type="radio" id="ans3" name="rdAnswerQuestion${i.count}" value="${row.answer_3}">
                                     <label for="ans3">${row.answer_3}</label><br>
-                                    <input type="radio" id="ans4" name="rdAnsCorrect${i.count}" value="${row.answer_4}">
+                                    <input type="radio" id="ans4" name="rdAnswerQuestion${i.count}" value="${row.answer_4}">
                                     <label for="ans4">${row.answer_4}</label><br>
                                 </td>
                             </tr>
@@ -165,14 +180,8 @@
                     display.textContent = minutes + ":" + seconds;
 
                     if (diff <= 0) {
-                        
-                        var form = document.getElementById("formQuiz");
-                        var hiddenField = document.createElement("input");
-                        hiddenField.setAttribute("type", "hidden");
-                        hiddenField.setAttribute("name", "btAction");
-                        hiddenField.setAttribute("value", "Finish Quiz");
-                        form.appendChild(hiddenField);
-                        form.submit();
+
+                        submitForm();
                     }
                 }
                 ;
@@ -198,17 +207,21 @@
             document.getElementById("btnSubmit").addEventListener('click', function () {
 
                 if (confirm("Are you sure to submit quiz ?")) {
-                    var form = document.getElementById("formQuiz");
-                    var hiddenField = document.createElement("input");
-                    hiddenField.setAttribute("type", "hidden");
-                    hiddenField.setAttribute("name", "btAction");
-                    hiddenField.setAttribute("value", "Finish Quiz");
-                    form.appendChild(hiddenField);
-                    form.submit();
+                    submitForm();
                 } else {
-
+                     event.preventDefault();
                 }
             });
+
+            function submitForm() {
+                var form = document.getElementById("formQuiz");
+                var hiddenField = document.createElement("input");
+                hiddenField.setAttribute("type", "hidden");
+                hiddenField.setAttribute("name", "btAction");
+                hiddenField.setAttribute("value", "Finish Quiz");
+                form.appendChild(hiddenField);
+                form.submit();
+            }
 
 
 

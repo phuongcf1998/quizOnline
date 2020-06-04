@@ -15,8 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.naming.NamingException;
 import phuongntd.utils.DBUtils;
-import phuongntd.utils.TimeCaculator;
-import java.util.Calendar;
+import phuongntd.utils.DateCaculator;
 
 /**
  *
@@ -24,7 +23,7 @@ import java.util.Calendar;
  */
 public class QuestionDAO implements Serializable {
 
-    Calendar calendar = Calendar.getInstance();
+   
 
     List<QuestionDTO> listQuestion;
 
@@ -38,7 +37,7 @@ public class QuestionDAO implements Serializable {
 
         Connection conn = null;
         PreparedStatement stm = null;
-        Date date = (Date) TimeCaculator.getCurrentDate();
+        Date date = (Date) DateCaculator.getCurrentDate();
 
         try {
             conn = DBUtils.makeConnection();
@@ -77,7 +76,7 @@ public class QuestionDAO implements Serializable {
 
     }
 
-    public void searchQuestionBySubject(String subjectID, int status, int pageIndex, int pageSize) throws SQLException, NamingException {
+    public void searchQuestionBySubject(String searchValue, int status, int pageIndex, int pageSize) throws SQLException, NamingException {
         Connection conn = null;
         PreparedStatement stm = null;
         ResultSet rs = null;
@@ -85,15 +84,15 @@ public class QuestionDAO implements Serializable {
             conn = DBUtils.makeConnection();
             if (conn != null) {
                 String sql = "SELECT id,question_content,answer_1,answer_2,"
-                        + "answer_3,answer_4,answer_correct,createDate "
+                        + "answer_3,answer_4,answer_correct,createDate,subjectID "
                         + "FROM tbl_Question WHERE "
-                        + "subjectID = ? AND status = ? "
+                        + "subjectID LIKE ? AND status = ? "
                         + "ORDER BY question_content "
                         + "OFFSET ? ROWS "
                         + "FETCH NEXT ? "
                         + "ROW ONLY";
                 stm = conn.prepareStatement(sql);
-                stm.setString(1, subjectID);
+                stm.setString(1, "%" + searchValue + "%");
                 stm.setInt(2, status);
                 stm.setInt(3, (pageIndex - 1) * pageSize);
                 stm.setInt(4, pageSize);
@@ -110,6 +109,7 @@ public class QuestionDAO implements Serializable {
                     String a4 = rs.getString("answer_4");
                     String answerCorrect = rs.getString("answer_correct");
                     Date createDate = rs.getDate("createDate");
+                    String subjectID = rs.getString("subjectID");
                     QuestionDTO dto = new QuestionDTO(id, questionContent, a1, a2, a3, a4, answerCorrect, createDate, subjectID, status);
                     listQuestion.add(dto);
 
@@ -371,10 +371,10 @@ public class QuestionDAO implements Serializable {
             conn = DBUtils.makeConnection();
             if (conn != null) {
                 String sql = "SELECT COUNT(id) FROM tbl_Question WHERE "
-                        + "subjectID = ? and status = ?";
+                        + "subjectID like ? and status = ?";
 
                 stm = conn.prepareStatement(sql);
-                stm.setString(1, subjectID);
+                stm.setString(1, "%" + subjectID + "%");
                 stm.setInt(2, status);
                 rs = stm.executeQuery();
                 while (rs.next()) {

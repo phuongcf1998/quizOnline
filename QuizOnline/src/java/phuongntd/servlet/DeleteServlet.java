@@ -38,14 +38,21 @@ public class DeleteServlet extends HttpServlet {
         String lastSearchValue = request.getParameter("lastSearchValue");
         String page = request.getParameter("page");
         String status = request.getParameter("status");
+        String searchOption = request.getParameter("searchOption");
         String url = "";
         try {
             QuestionDAO dao = new QuestionDAO();
             boolean result = dao.deleteQuestion(questionID);
             if (result) {
-                url = "ProcessServlet?btAction=Search_Question"
-                        + "&txtSearchValue="
-                        + lastSearchValue + "&slStatus=" + status + "&page=" + page;
+                if (searchOption.equals("")) {
+                    url = "ProcessServlet?btAction=Search_Question"
+                            + "&txtSearchValue="
+                            + lastSearchValue + "&slStatus=" + status + "&page=" + page;
+                } else {
+                    url = "ProcessServlet?btAction=Search_Question"
+                            + "&txtSearchValue="
+                            + lastSearchValue + "&slStatus=" + status + "&page=" + page + "&chkSearchSubject=" + searchOption;
+                }
 
             }
 

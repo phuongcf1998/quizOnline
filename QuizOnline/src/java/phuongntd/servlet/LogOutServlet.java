@@ -40,8 +40,10 @@ public class LogOutServlet extends HttpServlet {
         try {
             if (session != null && session.getAttribute("ADMIN") != null) {
                 session.removeAttribute("ADMIN");
+                session.invalidate();
             } else if (session != null && session.getAttribute("STUDENT") != null) {
                 session.removeAttribute("STUDENT");
+                session.invalidate();
             }
 
         } finally {

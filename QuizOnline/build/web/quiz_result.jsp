@@ -33,6 +33,12 @@
         <c:set var="currentDate" value="${requestScope.DATE}"/>
       
 
+        <c:set var="student" value="${sessionScope.STUDENT.name}"/>
+        
+        <c:if test="${empty student}">
+            <c:redirect url="login.html"></c:redirect>
+        </c:if>
+        
         <table class="flex-container">
             <tbody>
 

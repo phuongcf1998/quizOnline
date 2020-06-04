@@ -27,6 +27,7 @@ import phuongntd.user.UserDTO;
 public class ViewQuizHistoryServlet extends HttpServlet {
 
     private final String QUIZ_HISTORY = "quiz_history.jsp";
+    private final String LOGIN_PAGE = "login.html";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,11 +46,11 @@ public class ViewQuizHistoryServlet extends HttpServlet {
         if (request.getParameter("page") != null) {
             pageIndex = Integer.parseInt(request.getParameter("page"));
         }
-        System.out.println(pageIndex);
-        String url = QUIZ_HISTORY;
+        
+        String url = LOGIN_PAGE;
         try {
             HttpSession session = request.getSession(false);
-            if (session != null) {
+            if (session != null && session.getAttribute("STUDENT") != null) {
                 int pageSize = 10;
                 int endPage = 0;
                 UserDTO userInfo = (UserDTO) session.getAttribute("STUDENT");
@@ -67,6 +68,10 @@ public class ViewQuizHistoryServlet extends HttpServlet {
                 request.setAttribute("HISTORY_LIST", listQuizHistory);
                 request.setAttribute("END_PAGE_ALL", endPage);
                 request.setAttribute("CURRENT_PAGE_SHOW", pageIndex);
+                url = QUIZ_HISTORY;
+            } else {
+                url = LOGIN_PAGE;
+
             }
         } catch (SQLException ex) {
             log("ViewQuizHistoryServlet_SQLException " + ex.getMessage());

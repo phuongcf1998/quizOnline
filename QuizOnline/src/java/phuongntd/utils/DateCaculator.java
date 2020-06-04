@@ -12,7 +12,7 @@ import java.sql.Date;
  *
  * @author Yun
  */
-public class TimeCaculator implements Serializable{
+public class DateCaculator implements Serializable{
 
 
     public static Date getCurrentDate() {
